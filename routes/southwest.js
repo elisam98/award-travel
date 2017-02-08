@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 				destinationAirport: req.query.destination.toUpperCase(),
 				returnAirport: '',
 				returnAirport_displayed: '',
-				outboundDateString: req.query.date,
+				outboundDateString: '03/07/2017',
 				outboundTimeOfDay: 'ANYTIME',
 				adultPassengerCount: 1,
 				seniorPassengerCount: 0,
