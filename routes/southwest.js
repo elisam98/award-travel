@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 				destinationAirport: req.query.destination.toUpperCase(),
 				returnAirport: '',
 				returnAirport_displayed: '',
-				outboundDateString: '03/01/2017',
+				outboundDateString: req.query.date,
 				outboundTimeOfDay: 'ANYTIME',
 				adultPassengerCount: 1,
 				seniorPassengerCount: 0,
@@ -43,7 +43,7 @@ router.get('/', function(req, res, next) {
 
 				var flightInfo = querystring.parse($(el).children('.routing_column').find('a').attr('href').slice(23));
 				var flightDetails = querystring.parse($(el).children('.flight_column').find('a').eq(1).attr('href').slice(34));
-				console.log(flightDetails);
+
 				var flights = [];
 
 				var prices = {
@@ -84,7 +84,7 @@ router.get('/', function(req, res, next) {
 				}
 
 				jsonify.push(object);
-				console.log('Index: ' + i)
+//				console.log('Index: ' + i)
 			});
 			res.json(jsonify);
 		}
