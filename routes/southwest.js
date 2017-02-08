@@ -5,6 +5,10 @@ var cheerio = require('cheerio');
 var querystring = require('querystring');
 
 router.get('/', function(req, res, next) {
+
+	var origin = req.query.origin.toUpperCase();
+	var destination = req.query.destination.toUpperCase();
+
 	request.post('https://www.southwest.com/flight/select-flight.html',
 		{
 			form: {
@@ -16,8 +20,8 @@ router.get('/', function(req, res, next) {
 				awardCertificateProductId: '',
 				awardCertificateToggleSelected: false,
 				oneWayCertificateOrAward: false,
-				originAirport: req.query.origin.toUpperCase(),
-				destinationAirport: req.query.destination.toUpperCase(),
+				originAirport: origin,
+				destinationAirport: destination,
 				returnAirport: '',
 				returnAirport_displayed: '',
 				outboundDateString: '03/07/2017',
@@ -39,12 +43,12 @@ router.get('/', function(req, res, next) {
 			var jsonify = [];
 
 			$('table#faresOutbound').children('tbody').children('tr').each((i, el) => {
-				var stops = parseInt($(el).children('.routing_column').find('a').text());
+				var stops = parseInt($(el).chidren('.routing_column').find('a').text());
 
 				var flightInfo = querystring.parse($(el).children('.routing_column').find('a').attr('href').slice(23));
 				var flightDetails = querystring.parse($(el).children('.flight_column').find('a').eq(1).attr('href').slice(34));
 
-				var flights = [];
+				var segments = [];
 
 				var prices = {
 					business: $(el).children('.price_column').eq(0).find('.product_price').text(),
@@ -53,7 +57,7 @@ router.get('/', function(req, res, next) {
 
 				}
 
-				flights.push({
+				segments.push({
 					flightNumber: parseInt(flightInfo.firstFlightNumber.slice(1)),
 					carrier: flightInfo.firstOperCarrier,
 					departs: flightInfo.firstFlightTime,
@@ -64,7 +68,7 @@ router.get('/', function(req, res, next) {
 				});
 
 				if(stops == 1) {
-					flights.push({
+					segments.push({
 						flightNumber: parseInt(flightInfo.secondFlightNumber.slice(1)),
 						carrier: flightInfo.secondOperCarrier,
 						departs: flightInfo.secondFlightTime,
@@ -74,19 +78,26 @@ router.get('/', function(req, res, next) {
 						equipment: flightDetails.secondFlightEquipmentCode
 					});
 				}
-				var object = {
+				var flight = {
 					departs: $(el).children('.depart_column').find('.bugText').text().trim(),
 					arrives: $(el).children('.arrive_column').find('.bugText').text().trim(),
 					summary: flightInfo.flightSummary,
 					stops: parseInt(stops),
-					flights: flights,
+					segments: segments,
 					prices: prices
 				}
 
-				jsonify.push(object);
+				jsonify.push(flight);
 //				console.log('Index: ' + i)
 			});
-			res.json(jsonify);
+			res.json({
+				meta: {
+					origin: origin,
+					destination: destination,
+					length: jsonify.length
+				},
+				flights: jsonify
+			});
 		}
 	);
 });
