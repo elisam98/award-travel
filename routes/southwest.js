@@ -43,7 +43,7 @@ router.get('/', function(req, res, next) {
 			var jsonify = [];
 
 			$('table#faresOutbound').children('tbody').children('tr').each((i, el) => {
-				var stops = parseInt($(el).chidren('.routing_column').find('a').text());
+				var stops = parseInt($(el).children('.routing_column').find('a').text());
 
 				var flightInfo = querystring.parse($(el).children('.routing_column').find('a').attr('href').slice(23));
 				var flightDetails = querystring.parse($(el).children('.flight_column').find('a').eq(1).attr('href').slice(34));
