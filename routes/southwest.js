@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
 
 	var origin = req.query.origin.toUpperCase();
 	var destination = req.query.destination.toUpperCase();
+	var date = req.query.date;
 
 	request.post('https://www.southwest.com/flight/select-flight.html',
 		{
@@ -24,7 +25,7 @@ router.get('/', function(req, res, next) {
 				destinationAirport: destination,
 				returnAirport: '',
 				returnAirport_displayed: '',
-				outboundDateString: '03/07/2017',
+				outboundDateString: date,
 				outboundTimeOfDay: 'ANYTIME',
 				adultPassengerCount: 1,
 				seniorPassengerCount: 0,
@@ -94,7 +95,8 @@ router.get('/', function(req, res, next) {
 				meta: {
 					origin: origin,
 					destination: destination,
-					length: jsonify.length
+					date: date,
+					resultCount: jsonify.length
 				},
 				flights: jsonify
 			});
